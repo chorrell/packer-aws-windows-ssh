@@ -29,6 +29,14 @@
 				"801119661308"
 			]
 		},
+		"launch_block_device_mappings": [
+			{
+			"device_name": "/dev/sda1",
+			"delete_on_termination": true,
+			"volume_size": 50,
+			"volume_type": "gp3"
+			}
+		],
 
 		"communicator": "ssh",
 		"ssh_timeout": "10m",
@@ -37,13 +45,14 @@
 		"ami_description": "{{ user `image_name` }}",
 		"ami_name": "{{ user `ami_name_prefix` }}-{{isotime \"2006-01-02-1504\"}}",
 		"ami_virtualization_type": "hvm",
+
 		"snapshot_tags": {
 			"Name": "{{ user `image_name` }}",
-			"OS": "Windows-2016"
+			"OS": "Windows-2022"
 		},
 		"tags": {
 			"Name": "{{ user `image_name` }}",
-			"OS": "Windows-2016"
+			"OS": "Windows-2022"
 		}
 	}],
 	"provisioners": [
