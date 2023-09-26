@@ -4,8 +4,8 @@
 		"aws_secret_access_key": "{{ env `AWS_SECRET_ACCESS_KEY` }}",
 		"region": "{{ env `AWS_REGION` }}",
 
-		"image_name": "Windows Image",
-		"ami_name_prefix": "windows-base"
+		"image_name": "Windows 2022 Image with ssh",
+		"ami_name_prefix": "windows-base-2022"
 	},
 	"builders": [{
 		"type": "amazon-ebs",
@@ -20,7 +20,7 @@
 		"user_data_file": "files/configure-source-ssh.ps1",
 		"source_ami_filter": {
 			"filters": {
-				"name": "Windows_Server-2016-English-Full-Base-*",
+				"name": "Windows_Server-2022-English-Full-Base-*",
 				"root-device-type": "ebs",
 				"virtualization-type": "hvm"
 			},
