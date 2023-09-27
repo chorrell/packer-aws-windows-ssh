@@ -15,7 +15,7 @@
 		"region": "{{user `region`}}",
 		"spot_price_auto_product": "Windows (Amazon VPC)",
 
-		"instance_type": "t3a.medium",
+		"instance_type": "c5a.large",
 		"associate_public_ip_address": true,
 		"user_data_file": "files/configure-source-ssh.ps1",
 		"source_ami_filter": {
