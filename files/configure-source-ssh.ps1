@@ -5,9 +5,6 @@ $openSSHURL = "https://github.com/PowerShell/Win32-OpenSSH/releases/download/v$o
 
 Set-ExecutionPolicy Unrestricted
 
-# GitHub became TLS 1.2 only on Feb 22, 2018
-[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12;
-
 # Function to unzip an archive to a given destination
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 Function Unzip
