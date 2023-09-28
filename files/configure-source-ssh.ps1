@@ -12,21 +12,6 @@ $openSSHURL = "https://github.com/PowerShell/Win32-OpenSSH/releases/download/v$o
 
 Set-ExecutionPolicy Unrestricted
 
-# Function to unzip an archive to a given destination
-Add-Type -AssemblyName System.IO.Compression.FileSystem
-Function Unzip
-{
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory=$true, Position=0)]
-        [string] $ZipFile,
-        [Parameter(Mandatory=$true, Position=1)]
-        [string] $OutPath
-    )
-
-    [System.IO.Compression.ZipFile]::ExtractToDirectory($zipFile, $outPath)
-}
-
 # Set various known paths
 $openSSHZip = Join-Path $env:TEMP 'OpenSSH.zip'
 $openSSHInstallDir = Join-Path $env:ProgramFiles 'OpenSSH'
@@ -38,9 +23,8 @@ $openSSHDaemonConfig = [io.path]::combine($env:ProgramData, 'ssh', 'sshd_config'
 Write-Host "Donwloading OpenSSH"
 Invoke-WebRequest -Uri $openSSHURL -OutFile $openSSHZip -ErrorAction Stop
 
-Unzip -ZipFile $openSSHZip `
-    -OutPath "$env:TEMP" `
-    -ErrorAction Stop
+Write-Host "Unzipping OpenSSH"
+Expand-Archive $openSSHZip "$env:TEMP" -ErrorAction Stop
 
 Remove-Item -Force $openSSHZip -ErrorAction SilentlyContinue
 
