@@ -35,10 +35,8 @@ $openSSHDownloadKeyScript = Join-Path $openSSHInstallDir 'download-key-pair.ps1'
 $openSSHDaemon = Join-Path $openSSHInstallDir 'sshd.exe'
 $openSSHDaemonConfig = [io.path]::combine($env:ProgramData, 'ssh', 'sshd_config')
 
-# Download and unpack the binary distribution of OpenSSH
-Invoke-WebRequest -Uri $openSSHURL `
-    -OutFile $openSSHZip `
-    -ErrorAction Stop
+Write-Host "Donwloading OpenSSH"
+Invoke-WebRequest -Uri $openSSHURL -OutFile $openSSHZip -ErrorAction Stop
 
 Unzip -ZipFile $openSSHZip `
     -OutPath "$env:TEMP" `
