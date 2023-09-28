@@ -2,6 +2,7 @@
 # Don't display progress bars
 # See: https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_preference_variables?view=powershell-7.3#progresspreference
 $ProgressPreference = 'SilentlyContinue'
+$ErrorActionPreference = 'Stop'
 
 Write-Host "Disabling anti-virus monitoring"
 Set-MpPreference -DisableRealtimeMonitoring $true
@@ -21,17 +22,17 @@ $openSSHDaemon = Join-Path $openSSHInstallDir 'sshd.exe'
 $openSSHDaemonConfig = [io.path]::combine($env:ProgramData, 'ssh', 'sshd_config')
 
 Write-Host "Donwloading OpenSSH"
-Invoke-WebRequest -Uri $openSSHURL -OutFile $openSSHZip -ErrorAction Stop
+Invoke-WebRequest -Uri $openSSHURL -OutFile $openSSHZip
 
 Write-Host "Unzipping OpenSSH"
-Expand-Archive $openSSHZip "$env:TEMP" -ErrorAction Stop
+Expand-Archive $openSSHZip "$env:TEMP"
 
-Remove-Item -Force $openSSHZip -ErrorAction SilentlyContinue
+$ErrorActionPreference = 'SilentlyContinue'
+Remove-Item -Force $openSSHZip
+$ErrorActionPreference = 'Stop'
 
 # Move into Program Files
-Move-Item -Path (Join-Path $env:TEMP 'OpenSSH-Win64') `
-    -Destination $openSSHInstallDir `
-    -ErrorAction Stop
+Move-Item -Path (Join-Path $env:TEMP 'OpenSSH-Win64') -Destination $openSSHInstallDir
 
 # Run the install script, terminate if it fails
 & Powershell.exe -ExecutionPolicy Bypass -File $openSSHInstallScript
@@ -49,19 +50,16 @@ New-NetFirewallRule -Name sshd `
     -Protocol TCP `
     -LocalPort 22 `
     -Program "$openSSHDaemon" `
-    -Action Allow `
-    -ErrorAction Stop
+    -Action Allow
 
 # Ensure sshd automatically starts on boot
-Set-Service sshd -StartupType Automatic `
-    -ErrorAction Stop
+Set-Service sshd -StartupType Automatic
 
 # Set the default login shell for SSH connections to Powershell
 New-Item -Path HKLM:\SOFTWARE\OpenSSH -Force
 New-ItemProperty -Path HKLM:\SOFTWARE\OpenSSH `
     -Name DefaultShell `
-    -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" `
-    -ErrorAction Stop
+    -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"
 
 $keyDownloadScript = @'
 # Download the instance key pair and authorize Administrator logins using it
