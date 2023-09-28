@@ -8,7 +8,7 @@ Write-Host "Disabling anti-virus monitoring"
 Set-MpPreference -DisableRealtimeMonitoring $true
 
 # Version and download URL
-$openSSHVersion = "7.6.1.0p1-Beta"
+$openSSHVersion = "7.7.0.0p1-Beta"
 $openSSHURL = "https://github.com/PowerShell/Win32-OpenSSH/releases/download/v$openSSHVersion/OpenSSH-Win64.zip"
 
 Set-ExecutionPolicy Unrestricted
@@ -139,6 +139,6 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 # Restart to ensure public key authentication works and SSH comes up
-Restart-Computer -Force
+Restart-Computer
 </powershell>
 <runAsLocalSystem>true</runAsLocalSystem>
