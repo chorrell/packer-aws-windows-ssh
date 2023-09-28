@@ -3,6 +3,9 @@
 # See: https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_preference_variables?view=powershell-7.3#progresspreference
 $ProgressPreference = 'SilentlyContinue'
 
+Write-Host "Disabling anti-virus monitoring"
+Set-MpPreference -DisableRealtimeMonitoring $true
+
 # Version and download URL
 $openSSHVersion = "7.6.1.0p1-Beta"
 $openSSHURL = "https://github.com/PowerShell/Win32-OpenSSH/releases/download/v$openSSHVersion/OpenSSH-Win64.zip"
