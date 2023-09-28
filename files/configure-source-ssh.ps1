@@ -44,8 +44,7 @@ Unzip -ZipFile $openSSHZip `
     -OutPath "$env:TEMP" `
     -ErrorAction Stop
 
-Remove-Item $openSSHZip `
-    -ErrorAction SilentlyContinue
+Remove-Item -Force $openSSHZip -ErrorAction SilentlyContinue
 
 # Move into Program Files
 Move-Item -Path (Join-Path $env:TEMP 'OpenSSH-Win64') `
