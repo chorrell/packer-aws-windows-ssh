@@ -5,5 +5,5 @@ Remove-Item -Recurse -Force -Path $keysFile
 
 Enable-ScheduledTask "Download Key Pair"
 
-echo "Running Sysprep Instance"
+Write-Output "Running Sysprep Instance"
 & "$Env:Programfiles\Amazon\EC2Launch\ec2launch.exe" sysprep
