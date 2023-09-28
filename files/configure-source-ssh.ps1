@@ -1,8 +1,6 @@
 <powershell>
-$ErrorActionPreference = 'Stop'
-
 # Version and download URL
-$openSSHVersion = "9.2.2.0p1-Beta"
+$openSSHVersion = "7.6.1.0p1-Beta"
 $openSSHURL = "https://github.com/PowerShell/Win32-OpenSSH/releases/download/v$openSSHVersion/OpenSSH-Win64.zip"
 
 Set-ExecutionPolicy Unrestricted
