@@ -141,4 +141,3 @@ if ($LASTEXITCODE -ne 0) {
 # Restart to ensure public key authentication works and SSH comes up
 Restart-Computer
 </powershell>
-<runAsLocalSystem>true</runAsLocalSystem>
