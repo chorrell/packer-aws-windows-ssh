@@ -14,7 +14,7 @@ variable "ami_name_prefix" {
 
 variable "image_name" {
   type    = string
-  default = "Windows 2022 Image with ssh"
+  default = "Windows Server 2022 image with ssh"
 }
 
 locals { timestamp = regex_replace(timestamp(), "[- TZ:]", "") }
