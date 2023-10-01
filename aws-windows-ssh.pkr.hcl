@@ -40,7 +40,9 @@ source "amazon-ebs" "aws-windows-ssh" {
   ssh_timeout                 = "10m"
   ssh_username                = "Administrator"
   user_data_file               = "files/configure-source-ssh.ps1"
-
+  fast_launch {
+    enable_fast_launch = false
+  }
   snapshot_tags = {
     Name      = "${var.image_name}"
     BuildTime = "${local.timestamp}"
