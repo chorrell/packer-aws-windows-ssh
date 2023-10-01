@@ -30,24 +30,26 @@ data "amazon-ami" "aws-windows-ssh" {
 }
 
 source "amazon-ebs" "aws-windows-ssh" {
-  ami_description             = "${var.image_name}"
+  source_ami                  = "${data.amazon-ami.aws-windows-ssh.id}"
   ami_name                    = "${var.ami_name_prefix}-${local.timestamp}"
+  ami_description             = "${var.image_name}"
   ami_virtualization_type     = "hvm"
   associate_public_ip_address = true
   communicator                = "ssh"
   instance_type               = "c5a.large"
+  ssh_timeout                 = "10m"
+  ssh_username                = "Administrator"
+  user_data_file               = "files/configure-source-ssh.ps1"
+
   snapshot_tags = {
-    Name = "${var.image_name}"
+    Name      = "${var.image_name}"
     BuildTime = "${local.timestamp}"
   }
-  source_ami   = "${data.amazon-ami.aws-windows-ssh.id}"
-  ssh_timeout  = "10m"
-  ssh_username = "Administrator"
+
   tags = {
-    Name = "${var.image_name}"
+    Name      = "${var.image_name}"
     BuildTime = "${local.timestamp}"
   }
-  user_data_file = "files/configure-source-ssh.ps1"
 }
 
 build {
@@ -60,5 +62,4 @@ build {
   provisioner "powershell" {
     script = "files/prepare-image.ps1"
   }
-
 }
