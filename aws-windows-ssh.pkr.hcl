@@ -38,14 +38,14 @@ source "amazon-ebs" "aws-windows-ssh" {
   instance_type               = "c5a.large"
   snapshot_tags = {
     Name = "${var.image_name}"
-    OS   = "Windows-2022"
+    BuildTime = "${local.timestamp}"
   }
   source_ami   = "${data.amazon-ami.aws-windows-ssh.id}"
   ssh_timeout  = "10m"
   ssh_username = "Administrator"
   tags = {
     Name = "${var.image_name}"
-    OS   = "Windows-2022"
+    BuildTime = "${local.timestamp}"
   }
   user_data_file = "files/configure-source-ssh.ps1"
 }
