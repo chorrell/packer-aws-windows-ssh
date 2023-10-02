@@ -58,7 +58,7 @@ build {
   sources = ["source.amazon-ebs.aws-windows-ssh"]
 
   provisioner "powershell" {
-    inline = ["echo 'Provision Things Here' | Out-File C:/test.txt"]
+    script = "files/install-choco.ps1"
   }
 
   provisioner "powershell" {
