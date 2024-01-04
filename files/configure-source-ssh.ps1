@@ -8,7 +8,7 @@ Write-Host "Disabling anti-virus monitoring"
 Set-MpPreference -DisableRealtimeMonitoring $true
 
 # Version and download URL
-$openSSHVersion = "7.6.1.0p1-Beta"
+$openSSHVersion = "9.5.0.0p1-Beta"
 $openSSHURL = "https://github.com/PowerShell/Win32-OpenSSH/releases/download/v$openSSHVersion/OpenSSH-Win64.zip"
 
 Set-ExecutionPolicy Unrestricted
