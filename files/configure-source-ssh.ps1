@@ -3,61 +3,27 @@
 # See: https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_preference_variables?view=powershell-7.3#progresspreference
 $ProgressPreference = 'SilentlyContinue'
 $ErrorActionPreference = 'Stop'
+Set-ExecutionPolicy Unrestricted
 
 Write-Host "Disabling anti-virus monitoring"
 Set-MpPreference -DisableRealtimeMonitoring $true
 
-# Version and download URL
-$openSSHVersion = "9.5.0.0p1-Beta"
-$openSSHURL = "https://github.com/PowerShell/Win32-OpenSSH/releases/download/v$openSSHVersion/OpenSSH-Win64.zip"
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
 
-Set-ExecutionPolicy Unrestricted
+Start-Service sshd
+Set-Service -Name sshd -StartupType 'Automatic'
 
-# Set various known paths
-$openSSHZip = Join-Path $env:TEMP 'OpenSSH.zip'
-$openSSHInstallDir = Join-Path $env:ProgramFiles 'OpenSSH'
-$openSSHInstallScript = Join-Path $openSSHInstallDir 'install-sshd.ps1'
-$openSSHDownloadKeyScript = Join-Path $openSSHInstallDir 'download-key-pair.ps1'
-$openSSHDaemon = Join-Path $openSSHInstallDir 'sshd.exe'
-
-Write-Host "Donwloading OpenSSH"
-Invoke-WebRequest -Uri $openSSHURL -OutFile $openSSHZip
-
-Write-Host "Unzipping OpenSSH"
-Expand-Archive $openSSHZip "$env:TEMP"
-
-$ErrorActionPreference = 'SilentlyContinue'
-Remove-Item -Force $openSSHZip
-$ErrorActionPreference = 'Stop'
-
-# Move OpenSSH-Win64 into Program Files
-Move-Item -Path (Join-Path $env:TEMP 'OpenSSH-Win64') -Destination $openSSHInstallDir
-
-& Powershell.exe -ExecutionPolicy Bypass -File $openSSHInstallScript
-if ($LASTEXITCODE -ne 0) {
-	throw("Failed to install OpenSSH Server")
+# Confirm the Firewall rule is configured. It should be created automatically by setup. Run the following to verify
+if (!(Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyContinue | Select-Object Name, Enabled)) {
+    Write-Output "Firewall Rule 'OpenSSH-Server-In-TCP' does not exist, creating it..."
+    New-NetFirewallRule -Name 'OpenSSH-Server-In-TCP' -DisplayName 'OpenSSH Server (sshd)' -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 22
+} else {
+    Write-Output "Firewall rule 'OpenSSH-Server-In-TCP' has been created and exists."
 }
 
-# Add a firewall for sshd
-New-NetFirewallRule -Name sshd `
-    -DisplayName "OpenSSH Server (sshd)" `
-    -Group "Remote Access" `
-    -Description "Allow access via TCP port 22 to the OpenSSH Daemon" `
-    -Enabled True `
-    -Direction Inbound `
-    -Protocol TCP `
-    -LocalPort 22 `
-    -Program "$openSSHDaemon" `
-    -Action Allow
-
-# Start sshd automatically at boot
-Set-Service sshd -StartupType Automatic
-
-# Set the default login shell to Powershell
-New-Item -Path HKLM:\SOFTWARE\OpenSSH -Force
-New-ItemProperty -Path HKLM:\SOFTWARE\OpenSSH `
-    -Name DefaultShell `
-    -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"
+# Set the default shell to Powershell
+New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -PropertyType String -Force
 
 $keyDownloadScript = @'
 # Download instance key pair to $env:ProgramData\ssh\administrators_authorized_keys
