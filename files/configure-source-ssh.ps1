@@ -34,7 +34,6 @@ $ErrorActionPreference = 'Stop'
 # Move OpenSSH-Win64 into Program Files
 Move-Item -Path (Join-Path $env:TEMP 'OpenSSH-Win64') -Destination $openSSHInstallDir
 
-# Run the install script, terminate if it fails
 & Powershell.exe -ExecutionPolicy Bypass -File $openSSHInstallScript
 if ($LASTEXITCODE -ne 0) {
 	throw("Failed to install OpenSSH Server")
@@ -65,10 +64,6 @@ $keyDownloadScript = @'
 # Download instance key pair to $env:ProgramData\administrators_authorized_keys
 $openSSHAuthorizedKeys = Join-Path $env:ProgramData 'administrators_authorized_keys'
 
-If (-Not (Test-Path $openSSHAdminUser)) {
-    New-Item -Path $openSSHAdminUser -Type Directory
-}
-
 $keyUrl = "http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key"
 $keyReq = [System.Net.WebRequest]::Create($keyUrl)
 $keyResp = $keyReq.GetResponse()
@@ -87,8 +82,6 @@ $acl.SetAccessRule($dacl)
 $acl.SetAccessRuleProtection($true,$false)
 Set-Acl -Path $openSSHAuthorizedKeys -AclObject $acl
 
-Disable-ScheduledTask -TaskName "Download Key Pair"
-
 $keyDownloadScript | Out-File $openSSHDownloadKeyScript
 
 # Create Task - Ensure the name matches the verbatim version above
@@ -105,7 +98,6 @@ Register-ScheduledTask -Action $action `
     -Principal $principal `
     -TaskName $taskName `
     -Description $taskName
-Disable-ScheduledTask -TaskName $taskName
 
 # Run the install script, terminate if it fails
 & Powershell.exe -ExecutionPolicy Bypass -File $openSSHDownloadKeyScript
