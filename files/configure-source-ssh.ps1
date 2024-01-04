@@ -63,8 +63,7 @@ New-ItemProperty -Path HKLM:\SOFTWARE\OpenSSH `
 
 $keyDownloadScript = @'
 # Download the instance key pair and authorize Administrator logins using it
-$openSSHAdminUser = 'c:\ProgramData\ssh'
-$openSSHAuthorizedKeys = Join-Path $openSSHAdminUser 'authorized_keys'
+$openSSHAuthorizedKeys = Join-Path $env:ProgramData 'administrators_authorized_keys'
 
 If (-Not (Test-Path $openSSHAdminUser)) {
     New-Item -Path $openSSHAdminUser -Type Directory
@@ -80,40 +79,16 @@ $keyMaterial = $streamReader.ReadToEnd()
 $keyMaterial | Out-File -Append -FilePath $openSSHAuthorizedKeys -Encoding ASCII
 
 # Ensure access control on authorized_keys meets the requirements
-$acl = Get-ACL -Path $openSSHAuthorizedKeys
-$acl.SetAccessRuleProtection($True, $True)
-Set-Acl -Path $openSSHAuthorizedKeys -AclObject $acl
-
-$acl = Get-ACL -Path $openSSHAuthorizedKeys
-$ar = New-Object System.Security.AccessControl.FileSystemAccessRule( `
-	"NT Authority\Authenticated Users", "ReadAndExecute", "Allow")
-$acl.RemoveAccessRule($ar)
-$ar = New-Object System.Security.AccessControl.FileSystemAccessRule( `
-	"BUILTIN\Administrators", "FullControl", "Allow")
-$acl.RemoveAccessRule($ar)
-$ar = New-Object System.Security.AccessControl.FileSystemAccessRule( `
-	"BUILTIN\Users", "FullControl", "Allow")
-$acl.RemoveAccessRule($ar)
+$acl = New-Object System.Security.AccessControl.DirectorySecurity
+$dacl = New-Object System.Security.AccessControl.FileSystemAccessRule("SYSTEM","FullControl","Allow")
+$acl.SetAccessRule($dacl)
+$dacl = New-Object System.Security.AccessControl.FileSystemAccessRule("BUILTIN\Administrators","FullControl","Allow")
+$acl.SetAccessRule($dacl)
+$acl.SetAccessRuleProtection($true,$false)
 Set-Acl -Path $openSSHAuthorizedKeys -AclObject $acl
 
 Disable-ScheduledTask -TaskName "Download Key Pair"
 
-$sshdConfigContent = @"
-# Modified sshd_config, created by Packer provisioner
-
-PasswordAuthentication yes
-PubKeyAuthentication yes
-PidFile __PROGRAMDATA__/ssh/logs/sshd.pid
-AuthorizedKeysFile __PROGRAMDATA__/ssh/authorized_keys
-AllowUsers Administrator
-
-Subsystem       sftp    sftp-server.exe
-"@
-
-Set-Content -Path C:\ProgramData\ssh\sshd_config `
-    -Value $sshdConfigContent
-
-'@
 $keyDownloadScript | Out-File $openSSHDownloadKeyScript
 
 # Create Task - Ensure the name matches the verbatim version above
