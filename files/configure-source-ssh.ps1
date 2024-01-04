@@ -73,7 +73,7 @@ $keyMaterial = $streamReader.ReadToEnd()
 $keyMaterial | Out-File -Append -FilePath $openSSHAuthorizedKeys -Encoding ASCII
 
 # Ensure ACL for administrators_authorized_keys is correct
-icacls.exe $env:ProgramData\ssh\administrators_authorized_keys /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"
+icacls.exe $openSSHAuthorizedKeys /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"
 
 $keyDownloadScript | Out-File $openSSHDownloadKeyScript
 
