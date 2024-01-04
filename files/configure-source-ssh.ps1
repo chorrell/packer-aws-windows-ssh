@@ -60,8 +60,8 @@ New-ItemProperty -Path HKLM:\SOFTWARE\OpenSSH `
     -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"
 
 $keyDownloadScript = @'
-# Download instance key pair to $env:ProgramData\administrators_authorized_keys
-$openSSHAuthorizedKeys = Join-Path $env:ProgramData 'administrators_authorized_keys'
+# Download instance key pair to $env:ProgramData\ssh\administrators_authorized_keys
+$openSSHAuthorizedKeys = Join-Path $env:ProgramData 'ssh\administrators_authorized_keys'
 
 $keyUrl = "http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key"
 $keyReq = [System.Net.WebRequest]::Create($keyUrl)
