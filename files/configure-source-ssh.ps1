@@ -68,12 +68,6 @@ Register-ScheduledTask -Action $action `
     -TaskName $taskName `
     -Description $taskName
 
-# Run the install script, terminate if it fails
-& Powershell.exe -ExecutionPolicy Bypass -File $openSSHDownloadKeyScript
-if ($LASTEXITCODE -ne 0) {
-	throw("Failed to download key pair")
-}
-
 # Restart to ensure public key authentication works and SSH comes up
 Restart-Computer
 </powershell>
