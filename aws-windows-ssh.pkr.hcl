@@ -39,7 +39,7 @@ source "amazon-ebs" "aws-windows-ssh" {
   instance_type               = "c5a.large"
   ssh_timeout                 = "10m"
   ssh_username                = "Administrator"
-  user_data_file               = "files/configure-source-ssh.ps1"
+  user_data_file              = "files/configure-source-ssh.ps1"
   fast_launch {
     enable_fast_launch = false
   }
