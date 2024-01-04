@@ -19,7 +19,6 @@ $openSSHInstallDir = Join-Path $env:ProgramFiles 'OpenSSH'
 $openSSHInstallScript = Join-Path $openSSHInstallDir 'install-sshd.ps1'
 $openSSHDownloadKeyScript = Join-Path $openSSHInstallDir 'download-key-pair.ps1'
 $openSSHDaemon = Join-Path $openSSHInstallDir 'sshd.exe'
-$openSSHDaemonConfig = [io.path]::combine($env:ProgramData, 'ssh', 'sshd_config')
 
 Write-Host "Donwloading OpenSSH"
 Invoke-WebRequest -Uri $openSSHURL -OutFile $openSSHZip
