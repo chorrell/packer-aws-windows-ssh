@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 
 Write-Output "Cleaning up keys"
-$keysFile = [io.path]::combine($env:ProgramData, 'ssh', 'authorized_keys')
+$keysFile = [io.path]::combine($env:ProgramData, 'ssh', 'administrators_authorized_keys')
 Remove-Item -Recurse -Force -Path $keysFile
 
 Enable-ScheduledTask "Download Key Pair"
