@@ -62,4 +62,5 @@ Register-ScheduledTask -Action $action `
     -Description $taskName
 
 # Fetch key via $openSSHDownloadKeyScript
+	throw("Failed to download key pair")
 </powershell>
