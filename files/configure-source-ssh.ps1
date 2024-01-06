@@ -4,6 +4,9 @@
 $ProgressPreference = 'SilentlyContinue'
 $ErrorActionPreference = 'Stop'
 
+# Install OpenSSH using Add-WindowsCapability
+# See: https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse?tabs=powershell#install-openssh-for-windows
+
 Write-Host 'Installing and starting ssh-agent'
 Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
 Set-Service -Name ssh-agent -StartupType Automatic
@@ -22,7 +25,7 @@ if (!(Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyCon
     Write-Output "Firewall rule 'OpenSSH-Server-In-TCP' has been created and exists."
 }
 
-# Set the default shell to Powershell
+# Set default shell to Powershell
 New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -PropertyType String -Force
 
 $openSSHDownloadKeyScript = Join-Path $env:ProgramData 'ssh\download-key-pair.ps1'
@@ -41,6 +44,7 @@ $keyMaterial = $streamReader.ReadToEnd()
 $keyMaterial | Out-File -FilePath $openSSHAuthorizedKeys -Encoding ASCII
 
 # Ensure ACL for administrators_authorized_keys is correct
+# See https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh_server_configuration#authorizedkeysfile
 icacls.exe $openSSHAuthorizedKeys /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"
 '@ # End $keyDownloadScript
 
