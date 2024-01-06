@@ -38,7 +38,7 @@ $keyRespStream = $keyResp.GetResponseStream()
     $streamReader = New-Object System.IO.StreamReader $keyRespStream
 $keyMaterial = $streamReader.ReadToEnd()
 
-$keyMaterial | Out-File -Append -FilePath $openSSHAuthorizedKeys -Encoding ASCII
+$keyMaterial | Out-File -FilePath $openSSHAuthorizedKeys -Encoding ASCII
 
 # Ensure ACL for administrators_authorized_keys is correct
 icacls.exe $openSSHAuthorizedKeys /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"
