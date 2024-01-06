@@ -48,18 +48,10 @@ $keyDownloadScript | Out-File $openSSHDownloadKeyScript
 
 # Create Task - Ensure the name matches the verbatim version above
 $taskName = "Download Key Pair"
-$principal = New-ScheduledTaskPrincipal `
-    -UserID "NT AUTHORITY\SYSTEM" `
-    -LogonType ServiceAccount `
-    -RunLevel Highest
-$action = New-ScheduledTaskAction -Execute 'Powershell.exe' `
-  -Argument "-NoProfile -File ""$openSSHDownloadKeyScript"""
+$principal = New-ScheduledTaskPrincipal -UserID "NT AUTHORITY\SYSTEM" -LogonType ServiceAccount -RunLevel Highest
+$action = New-ScheduledTaskAction -Execute 'Powershell.exe'  -Argument "-NoProfile -File ""$openSSHDownloadKeyScript"""
 $trigger =  New-ScheduledTaskTrigger -AtStartup
-Register-ScheduledTask -Action $action `
-    -Trigger $trigger `
-    -Principal $principal `
-    -TaskName $taskName `
-    -Description $taskName
+Register-ScheduledTask -Action $action -Trigger $trigger -Principal $principal -TaskName $taskName -Description $taskName
 
 # Fetch key via $openSSHDownloadKeyScript
 & Powershell.exe -ExecutionPolicy Bypass -File $openSSHDownloadKeyScript
