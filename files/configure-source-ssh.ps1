@@ -46,7 +46,7 @@ icacls.exe $openSSHAuthorizedKeys /inheritance:r /grant "Administrators:F" /gran
 
 $keyDownloadScript | Out-File $openSSHDownloadKeyScript
 
-# Create Task - Ensure the name matches the verbatim version above
+# Create Task
 $taskName = "Download Key Pair"
 $principal = New-ScheduledTaskPrincipal -UserID "NT AUTHORITY\SYSTEM" -LogonType ServiceAccount -RunLevel Highest
 $action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "-NoProfile -File ""$openSSHDownloadKeyScript"""
