@@ -3,15 +3,15 @@
 # See: https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_preference_variables?view=powershell-7.3#progresspreference
 $ProgressPreference = 'SilentlyContinue'
 $ErrorActionPreference = 'Stop'
-Set-ExecutionPolicy Unrestricted
 
-Write-Host "Disabling anti-virus monitoring"
-Set-MpPreference -DisableRealtimeMonitoring $true
-
+Write-Host 'Installing and starting ssh-agent'
 Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
-Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+Set-Service -Name ssh-agent -StartupType Automatic
+Start-Service ssh-agent
 
-Set-Service -Name sshd -StartupType 'Automatic'
+Write-Host 'Installing and starting sshd'
+Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+Set-Service -Name sshd -StartupType Automatic
 Start-Service sshd
 
 # Confirm the Firewall rule is configured. It should be created automatically by setup. Run the following to verify
