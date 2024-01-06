@@ -55,8 +55,5 @@ Register-ScheduledTask -Action $action -Trigger $trigger -Principal $principal -
 
 # Fetch key via $openSSHDownloadKeyScript
 & Powershell.exe -ExecutionPolicy Bypass -File $openSSHDownloadKeyScript
-if ($LASTEXITCODE -ne 0) {
-    throw("Failed to download key pair")
-}
 
 </powershell>
