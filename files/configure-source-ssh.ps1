@@ -61,6 +61,5 @@ Register-ScheduledTask -Action $action `
     -TaskName $taskName `
     -Description $taskName
 
-# Restart to ensure public key authentication works and SSH comes up
-Restart-Computer
+# Fetch key via $openSSHDownloadKeyScript
 </powershell>
