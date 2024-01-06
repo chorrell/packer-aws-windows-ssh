@@ -42,6 +42,7 @@ $keyMaterial | Out-File -Append -FilePath $openSSHAuthorizedKeys -Encoding ASCII
 
 # Ensure ACL for administrators_authorized_keys is correct
 icacls.exe $openSSHAuthorizedKeys /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"
+'@ # End $keyDownloadScript
 
 $keyDownloadScript | Out-File $openSSHDownloadKeyScript
 
