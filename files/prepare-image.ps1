@@ -1,8 +1,8 @@
 $ErrorActionPreference = 'Stop'
 
 Write-Output "Cleaning up keys"
-$keysFile = [io.path]::combine($env:ProgramData, 'ssh', 'administrators_authorized_keys')
-Remove-Item -Recurse -Force -Path $keysFile
+$openSSHAuthorizedKeys = Join-Path $env:ProgramData 'ssh\administrators_authorized_keys'
+Remove-Item -Recurse -Force -Path $openSSHAuthorizedKeys
 
 # Make sure task is enabled
 Enable-ScheduledTask "Download Key Pair"
