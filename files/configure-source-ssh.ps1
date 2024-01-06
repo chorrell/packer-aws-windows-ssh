@@ -25,15 +25,7 @@ if (!(Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyCon
 # Set the default shell to Powershell
 New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -PropertyType String -Force
 
-# Make sure PubkeyAuthentication is enabled
-$sshd_config = Join-Path $env:ProgramData 'ssh\sshd_config'
-
-(Get-Content $sshd_config) -replace '#PubkeyAuthentication', 'PubkeyAuthentication' | Out-File -encoding ASCII $sshd_config
-
-Get-Content $sshd_config
-
-# Reload the config
-Restart-Service sshd
+$openSSHDownloadKeyScript = Join-Path $env:ProgramData 'ssh\download-key-pair.ps1'
 
 $keyDownloadScript = @'
 # Download instance key pair to $env:ProgramData\ssh\administrators_authorized_keys
