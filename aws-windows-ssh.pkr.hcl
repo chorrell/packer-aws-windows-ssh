@@ -41,7 +41,7 @@ source "amazon-ebs" "aws-windows-ssh" {
   ssh_timeout                 = "10m"
   ssh_username                = "Administrator"
   ssh_file_transfer_method    = "sftp"
-  user_data_file              = "files/configure-source-ssh.ps1"
+  user_data_file              = "files/SetupSsh.ps1"
   fast_launch {
     enable_fast_launch = false
   }
@@ -60,10 +60,10 @@ build {
   sources = ["source.amazon-ebs.aws-windows-ssh"]
 
   provisioner "powershell" {
-    script = "files/install-choco.ps1"
+    script = "files/InstallChoco.ps1"
   }
 
   provisioner "powershell" {
-    script = "files/prepare-image.ps1"
+    script = "files/PrepareImage.ps1"
   }
 }
