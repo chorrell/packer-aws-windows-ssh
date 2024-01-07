@@ -5,7 +5,7 @@ $openSSHAuthorizedKeys = Join-Path $env:ProgramData 'ssh\administrators_authoriz
 Remove-Item -Recurse -Force -Path $openSSHAuthorizedKeys
 
 # Make sure task is enabled
-Enable-ScheduledTask "Download Key Pair"
+Enable-ScheduledTask "DownloadKey"
 
 Write-Output "Running Sysprep"
 & "$Env:Programfiles\Amazon\EC2Launch\ec2launch.exe" sysprep

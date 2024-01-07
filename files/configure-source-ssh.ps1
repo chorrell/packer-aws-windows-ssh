@@ -28,36 +28,28 @@ if (!(Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyCon
 # Set default shell to Powershell
 New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -PropertyType String -Force
 
-$openSSHDownloadKeyScript = Join-Path $env:ProgramData 'ssh\download-key-pair.ps1'
+$keyDownloadScript = Join-Path $env:ProgramData 'ssh\download-key.ps1'
 
-$keyDownloadScript = @'
-# Download instance key pair to $env:ProgramData\ssh\administrators_authorized_keys
+@'
+# Download private key to $env:ProgramData\ssh\administrators_authorized_keys
 $openSSHAuthorizedKeys = Join-Path $env:ProgramData 'ssh\administrators_authorized_keys'
 
 $keyUrl = "http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key"
-$keyReq = [System.Net.WebRequest]::Create($keyUrl)
-$keyResp = $keyReq.GetResponse()
-$keyRespStream = $keyResp.GetResponseStream()
-    $streamReader = New-Object System.IO.StreamReader $keyRespStream
-$keyMaterial = $streamReader.ReadToEnd()
-
-$keyMaterial | Out-File -FilePath $openSSHAuthorizedKeys -Encoding ASCII
+Invoke-WebRequest $keyUrl -OutFile $openSSHAuthorizedKeys
 
 # Ensure ACL for administrators_authorized_keys is correct
 # See https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh_server_configuration#authorizedkeysfile
 icacls.exe $openSSHAuthorizedKeys /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"
-'@ # End $keyDownloadScript
-
-$keyDownloadScript | Out-File $openSSHDownloadKeyScript
+'@ | Out-File $keyDownloadScript
 
 # Create Task
-$taskName = "Download Key Pair"
+$taskName = "DownloadKey"
 $principal = New-ScheduledTaskPrincipal -UserID "NT AUTHORITY\SYSTEM" -LogonType ServiceAccount -RunLevel Highest
-$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "-NoProfile -File ""$openSSHDownloadKeyScript"""
+$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "-NoProfile -File ""$keyDownloadScript"""
 $trigger = New-ScheduledTaskTrigger -AtStartup
 Register-ScheduledTask -Action $action -Trigger $trigger -Principal $principal -TaskName $taskName -Description $taskName
 
-# Fetch key via $openSSHDownloadKeyScript
-& Powershell.exe -ExecutionPolicy Bypass -File $openSSHDownloadKeyScript
+# Fetch key via $keyDownloadScript
+& Powershell.exe -ExecutionPolicy Bypass -File $keyDownloadScript
 
 </powershell>
