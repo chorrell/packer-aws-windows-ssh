@@ -37,7 +37,7 @@ source "amazon-ebs" "aws-windows-ssh" {
   associate_public_ip_address = true
   communicator                = "ssh"
   spot_price                  = "auto"
-  spot_instance_types         = ["c7i.xlarge", "c7a.xlarge", "c6i.xlarge", "c6a.xlarge", "c5a.xlarge", "m6a.xlarge", "m5a.xlarge", "m5.xlarge"]
+  spot_instance_types         = ["c7i.large", "c7a.large", "c6i.large", "c6a.large", "c5a.large", "m6a.large", "m5a.large", "m5.large"]
   ssh_timeout                 = "10m"
   ssh_username                = "Administrator"
   ssh_file_transfer_method    = "sftp"
